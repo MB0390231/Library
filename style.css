@@ -2,11 +2,11 @@
 .main {
     display: grid;
     grid-template-rows: repeat(auto-fit,1fr);
-    gap: 1%;
+    gap: 20px;
 }
 header {
     display: flex;
-    gap: 3%;
+    gap: 50px;
     justify-content: right;
     align-items: center;
 }
@@ -15,8 +15,8 @@ header {
     height: 100%;
     display: grid;
     grid-template-columns: repeat(auto-fill,minmax(120px,1fr));
-    grid-template-rows: repeat(auto-fill,minmax(200px,1fr));
-    gap: 1%;
+    grid-auto-rows: 175px;
+    gap: 10px;
 }
 .toggle {
     background-color: lightgray;

@@ -17,10 +17,7 @@ function setAttributes(el, attrs) {
 }
 
 const Collection = {
-  books: [Book("Marvel Schematics", "Stan Lee", 769, false)],
-  book: (title, author, pages, read, rendered) => {
-    return { title, author, pages, read, rendered };
-  },
+  books: [new Book("Marvel Schematics", "Stan Lee", 769, false)],
   init: function () {
     this.cacheDom();
     this.bindEvents();
@@ -65,50 +62,75 @@ const Collection = {
     // div with two buttons in it
     let subcan = document.createElement("div");
     setAttributes(subcan, { class: "subcan" });
-    let cancel = document.createElement("button");
-    cancel.textContent = "cancel";
-    this.cancel = cancel;
-    setAttributes(cancel, { class: "cancel", type: "button" });
+    let close = document.createElement("button");
+    close.textContent = "close";
+    this.close = close;
+    setAttributes(close, { class: "close", type: "button" });
     let submit = document.createElement("button");
     this.submit = submit;
     submit.textContent = "add book";
     setAttributes(submit, { class: "submit", type: "button" });
-    subcan.appendChild(cancel);
+    subcan.appendChild(close);
     subcan.appendChild(submit);
     form.append(subcan);
     this.main.appendChild(form);
 
     this.form = form;
     // add button functionality
-    this.cancel.addEventListener("click", this.deleteForm.bind(this));
+    this.close.addEventListener("click", this.deleteForm.bind(this));
     this.submit.addEventListener("click", this.logBook.bind(this));
     this.submit.addEventListener("click", this.deleteForm.bind(this));
+    this.submit.addEventListener("click", this.renderBooks.bind(this));
   },
   logBook: function () {
-    this.books.push(
-      new Book(
-        this.title_input.value,
-        this.author_input.value,
-        this.pages_input.value,
-        false
-      )
+    new_book = new Book(
+      this.title_input.value,
+      this.author_input.value,
+      this.pages_input.value,
+      false
     );
+    this.books.push(new_book);
+    this.renderBooks.bind(this);
   },
   deleteForm: function () {
     this.form.remove();
   },
   renderBooks: function () {
+    while (this.library.firstChild) {
+      this.library.lastChild.remove();
+    }
+    let index = 0;
     this.books.forEach((book) => {
-      // if (!book.rendered) {
-      //     string = `<button type="button" class="notread" id="read">Read</button><p class='bold'>${book.title}</p><p>${book.author}</p><p>${book.pages}</p>`;
-      //     let child = document.createElement('div');
-      //     child.classList = 'card';
-      //     child.innerHTML = string;
-      //     this.library.appendChild(child)
-      //     book.rendered = true;
-      // }
+      const read = document.createElement("img");
+      setAttributes(read, {
+        class: "notread readmarker",
+        src: "../img/bookmark-check-outline.png",
+      });
+      const title = document.createElement("p");
+      title.textContent = book.title;
+      const author = document.createElement("p");
+      author.textContent = book.author;
+      const pages = document.createElement("p");
+      pages.textContent = book.pages;
+      book_div = document.createElement("div");
+      setAttributes(book_div, { class: "card", id: index });
+      book_div.appendChild(read);
+      book_div.appendChild(title);
+      book_div.appendChild(author);
+      book_div.appendChild(pages);
+      this.library.appendChild(book_div);
+      index++;
     });
   },
+
+  // if (!book.rendered) {
+  //     string = `<button type="button" class="notread" id="read">Read</button><p class='bold'>${book.title}</p><p>${book.author}</p><p>${book.pages}</p>`;
+  //     let child = document.createElement('div');
+  //     child.classList = 'card';
+  //     child.innerHTML = string;
+  //     this.library.appendChild(child)
+  //     book.rendered = true;
+  // }
 };
 
 Collection.init();

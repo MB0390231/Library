@@ -70,6 +70,7 @@ const Collection = {
     this.cancel = cancel;
     setAttributes(cancel, { class: "cancel", type: "button" });
     let submit = document.createElement("button");
+    this.submit = submit;
     submit.textContent = "add book";
     setAttributes(submit, { class: "submit", type: "button" });
     subcan.appendChild(cancel);
@@ -80,10 +81,19 @@ const Collection = {
     this.form = form;
     // add button functionality
     this.cancel.addEventListener("click", this.deleteForm.bind(this));
-    this.submit.addEventListener("click", this.logBook().bind(this));
-    this.submit.addEventListener("click", this.deleteForm().bind(this));
+    this.submit.addEventListener("click", this.logBook.bind(this));
+    this.submit.addEventListener("click", this.deleteForm.bind(this));
   },
-  logBook: function () {},
+  logBook: function () {
+    this.books.push(
+      new Book(
+        this.title_input.value,
+        this.author_input.value,
+        this.pages_input.value,
+        false
+      )
+    );
+  },
   deleteForm: function () {
     this.form.remove();
   },

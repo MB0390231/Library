@@ -17,7 +17,7 @@ function setAttributes(el, attrs) {
 }
 
 const Collection = {
-  books: [new Book("Marvel Schematics", "Stan Lee", 769, false)],
+  books: [new Book("Marvel Schematics", "Stan Lee", 769, true)],
   init: function () {
     this.cacheDom();
     this.bindEvents();
@@ -33,6 +33,10 @@ const Collection = {
     this.add.addEventListener("click", this.createForm.bind(this));
   },
   createForm: function () {
+    if (document.querySelector(".form")) {
+      return;
+    }
+    console.log("form created");
     let form = document.createElement("form");
     setAttributes(form, { class: "form" });
     let title = document.createElement("label");
@@ -83,6 +87,7 @@ const Collection = {
     this.submit.addEventListener("click", this.renderBooks.bind(this));
   },
   logBook: function () {
+    console.log("logged book");
     new_book = new Book(
       this.title_input.value,
       this.author_input.value,
@@ -93,18 +98,39 @@ const Collection = {
     this.renderBooks.bind(this);
   },
   deleteForm: function () {
+    console.log("form deleted");
     this.form.remove();
   },
   renderBooks: function () {
+    console.log("books rendered");
     while (this.library.firstChild) {
       this.library.lastChild.remove();
     }
     let index = 0;
     this.books.forEach((book) => {
+      const button_div = document.createElement("div");
+      setAttributes(button_div, { class: "button-container" });
+      const del = document.createElement("button");
+      setAttributes(del, { class: "delete" });
+      del.textContent = "X";
       const read = document.createElement("img");
       setAttributes(read, {
-        class: "notread readmarker",
+        class: "readmarker",
         src: "../img/bookmark-check-outline.png",
+        id: index,
+      });
+      button_div.appendChild(read);
+      button_div.appendChild(del);
+      del.addEventListener("click", function (e) {
+        index = e.target.id;
+        target = Collection.books.splice(index);
+        Collection.renderBooks();
+      });
+      read.addEventListener("click", function (e) {
+        index = e.target.id;
+        target = Collection.books[index];
+        target.read = target.read ? false : true;
+        Collection.renderBooks();
       });
       const title = document.createElement("p");
       title.textContent = book.title;
@@ -113,8 +139,10 @@ const Collection = {
       const pages = document.createElement("p");
       pages.textContent = book.pages;
       book_div = document.createElement("div");
-      setAttributes(book_div, { class: "card", id: index });
-      book_div.appendChild(read);
+      setAttributes(book_div, {
+        class: book.read ? "card" : "nonread card",
+      });
+      book_div.appendChild(button_div);
       book_div.appendChild(title);
       book_div.appendChild(author);
       book_div.appendChild(pages);
@@ -122,15 +150,6 @@ const Collection = {
       index++;
     });
   },
-
-  // if (!book.rendered) {
-  //     string = `<button type="button" class="notread" id="read">Read</button><p class='bold'>${book.title}</p><p>${book.author}</p><p>${book.pages}</p>`;
-  //     let child = document.createElement('div');
-  //     child.classList = 'card';
-  //     child.innerHTML = string;
-  //     this.library.appendChild(child)
-  //     book.rendered = true;
-  // }
 };
 
 Collection.init();
